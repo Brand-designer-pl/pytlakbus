@@ -67,3 +67,7 @@ Ceny, opisy aut, liczba miast (+N), e-mail i godziny w stopce to placeholdery do
 ## 2026-09-28 — menu: podkreślenie przy najechaniu, równe odstępy
 - Linki menu: linia 1.5 px (kolor tekstu) rysowana od lewej do prawej (`::after`, scaleX 0→1, 0.55 s, cubic-bezier(0.65,0,0.35,1)); po zjechaniu cofa się w prawo. Działa też przy fokusie z klawiatury (obrys fokusu zostaje). Reduced motion: bez przejścia.
 - Usunięto dodatkowy margines po „Start” — wszystkie pozycje mają jeden odstęp (clamp 20–44 px; 40 px przy 1440 px).
+
+## 2026-09-29 — „Przewiń” + pierwszy scroll z hero
+- „Przewiń” jest przyciskiem: pełne przejście (1.8 s, power2.inOut) do sekcji manifestu; strzałka przesuwa się w dół przy najechaniu/fokusie.
+- Pierwszy ruch w dół w hero (kółko, gest touchpada, przesunięcie palcem, ↓/PageDown/Spacja) odtwarza to samo przejście; w jego trakcie kółko jest blokowane. Poza hero przewijanie pozostaje zwykłe i ciągłe; przewijanie w górę nie jest przechwytywane. Bez sceny (reduced motion) przycisk przewija do #o-nas.

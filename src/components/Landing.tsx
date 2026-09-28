@@ -38,6 +38,7 @@ export function Landing() {
   const swapDir = useRef(0);
   const goRef = useRef<((dir: 1 | -1) => void) | null>(null);
   const scrollToRef = useRef<((id: string) => void) | null>(null);
+  const heroNextRef = useRef<(() => void) | null>(null);
   const [active, setActive] = useState(featuredIndex);
   const [paused, setPaused] = useState(false);
   const [specOpen, setSpecOpen] = useState(false);
@@ -139,6 +140,38 @@ export function Landing() {
         const y = yFor(anchorTime[id] ?? 0);
         gsap.to(window, { scrollTo: { y, autoKill: true }, duration: gsap.utils.clamp(0.8, 3, Math.abs(y - window.scrollY) / 2600), ease: 'power2.inOut' });
       });
+      // Hero → kolejna sekcja: pierwszy ruch w dół z hero odtwarza pełne przejście do manifestu.
+      // Dalej przewijanie jest zwykłe i ciągłe; auto-przejście wraca tylko po powrocie na sam początek (hero).
+      let heroBusy = false;
+      const inHero = () => ((window.scrollY - tl.scrollTrigger!.start) / (tl.scrollTrigger!.end - tl.scrollTrigger!.start)) * tl.duration() < 0.2;
+      const modalOpen = () => document.documentElement.classList.contains('spec-lock') || document.documentElement.classList.contains('booking-lock');
+      const heroNext = contextSafe!(() => {
+        if (heroBusy) return;
+        heroBusy = true;
+        gsap.to(window, { scrollTo: { y: yFor(stops.statement), autoKill: false }, duration: 1.8, ease: 'power2.inOut',
+          onComplete: () => { window.setTimeout(() => { heroBusy = false; }, 250); } }); // wygaszenie bezwładności touchpada
+      });
+      heroNextRef.current = heroNext;
+      const onWheel = (e: WheelEvent) => {
+        if (heroBusy) { e.preventDefault(); return; } // w trakcie przejścia kółko nie szarpie sceną
+        if (e.deltaY > 0 && !e.ctrlKey && inHero() && !modalOpen()) { e.preventDefault(); heroNext(); }
+      };
+      let touchY = 0;
+      const onTouchStart = (e: TouchEvent) => { touchY = e.touches[0].clientY; };
+      const onTouchMove = (e: TouchEvent) => {
+        if (heroBusy) { e.preventDefault(); return; }
+        if (touchY - e.touches[0].clientY > 12 && inHero() && !modalOpen()) { e.preventDefault(); heroNext(); }
+      };
+      const onHeroKey = (e: KeyboardEvent) => {
+        if (!inHero() || modalOpen() || e.altKey || e.ctrlKey || e.metaKey) return;
+        if ((e.target as HTMLElement).closest('input, textarea, select, button, [contenteditable="true"]') && e.key === ' ') return;
+        if (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) { e.preventDefault(); heroNext(); }
+      };
+      window.addEventListener('wheel', onWheel, { passive: false });
+      window.addEventListener('touchstart', onTouchStart, { passive: true });
+      window.addEventListener('touchmove', onTouchMove, { passive: false });
+      window.addEventListener('keydown', onHeroKey);
+
       // Wejście z innej strony z kotwicą (np. /#flota z podstrony Kontakt).
       // Odczyt z opóźnieniem: przy nawigacji klienckiej Next.js adres i jego własny scroll do kotwicy przychodzą po montażu.
       const hashFrame = window.setTimeout(() => {
@@ -213,6 +246,11 @@ export function Landing() {
         timeline.current = null;
         scrollToRef.current = null;
         window.clearTimeout(hashFrame);
+        window.removeEventListener('wheel', onWheel);
+        window.removeEventListener('touchstart', onTouchStart);
+        window.removeEventListener('touchmove', onTouchMove);
+        window.removeEventListener('keydown', onHeroKey);
+        heroNextRef.current = null;
         syncVideos.current = null;
         statementSplit.revert();
         collectionSplit.revert();
@@ -269,6 +307,12 @@ export function Landing() {
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
   }, []);
+
+  // „Przewiń”: pełne przejście do kolejnej sekcji (bez sceny — zwykły skok do sekcji „O nas”).
+  const goToNextSection = () => {
+    if (heroNextRef.current) { heroNextRef.current(); return; }
+    document.getElementById('o-nas')?.scrollIntoView({ behavior: window.matchMedia(reduceQuery).matches ? 'auto' : 'smooth' });
+  };
 
   const goToAnchor = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     if (!scrollToRef.current) return; // bez sceny (reduced motion / bez JS) działa zwykła kotwica
@@ -348,7 +392,7 @@ export function Landing() {
             <p className="lead" data-intro="lead">{copy.heroLead}</p>
           </div>
           <div className="hero-meta">
-            <span className="scroll-hint" data-intro="lead">Przewiń <ArrowDown /></span>
+            <button type="button" className="scroll-hint" data-intro="lead" onClick={goToNextSection}>Przewiń <ArrowDown /></button>
             <button type="button" className="film-toggle" data-intro="lead" onClick={togglePause} aria-pressed={paused}>
               {paused ? 'Odtwórz film' : 'Zatrzymaj film'}
             </button>

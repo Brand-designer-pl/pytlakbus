@@ -71,3 +71,9 @@ Ceny, opisy aut, liczba miast (+N), e-mail i godziny w stopce to placeholdery do
 ## 2026-09-29 — „Przewiń” + pierwszy scroll z hero
 - „Przewiń” jest przyciskiem: pełne przejście (1.8 s, power2.inOut) do sekcji manifestu; strzałka przesuwa się w dół przy najechaniu/fokusie.
 - Pierwszy ruch w dół w hero (kółko, gest touchpada, przesunięcie palcem, ↓/PageDown/Spacja) odtwarza to samo przejście; w jego trakcie kółko jest blokowane. Poza hero przewijanie pozostaje zwykłe i ciągłe; przewijanie w górę nie jest przechwytywane. Bez sceny (reduced motion) przycisk przewija do #o-nas.
+
+## 2026-10-20 — dane kontaktowe od klienta
+- `contact` i nowy `company` w content.ts: Pytlak Przewozy, Jarosław Pytlak, ul. Topolowa 1, 62-040 Puszczykowo, NIP 777-173-70-38, REGON 362706751, tel. +48 505 048 472, bus@pytlakprzewozy.pl, www.pytlakprzewozy.pl. Link do mapy = wyszukiwanie adresu w Mapach Google.
+- Uzupełnione wszędzie: podstrona Kontakt (kafle + „Dane firmy” z dojazdem), stopki obu stron, karta „Zadzwoń” i przycisk w rezerwacji. Brak pozostałych znaczników „do uzupełnienia”.
+- Kontakt: adres w dwóch liniach (bez łamania kodu pocztowego), jasne tło nagłówka podstrony (wcześniej nachodził na treść przy przewijaniu).
+- Uwaga środowiskowa: iCloud wyładował node_modules i .next (pliki „dataless”) — przywrócone przez `npm ci`; źródła i media były nienaruszone.

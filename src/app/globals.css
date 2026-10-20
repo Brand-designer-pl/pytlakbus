@@ -277,10 +277,19 @@ html.booking-lock { overflow: hidden; }
 .info-label { color: var(--muted); font-size: 14px; font-weight: 500; }
 .info-value { font-size: clamp(22px, 2vw, 34px); font-weight: 500; letter-spacing: -0.04em; line-height: 1.1; }
 .info-note { color: var(--muted); font-size: 14px; }
+.info-card:not(.info-card--dark) .info-value { font-size: clamp(18px, 1.6vw, 26px); overflow-wrap: anywhere; }
+.info-value .nowrap { display: block; white-space: nowrap; }
 .info-map { grid-column: 1 / -1; min-height: clamp(160px, 22vh, 240px); place-content: center; justify-items: center; text-align: center;
   background: repeating-linear-gradient(135deg, var(--tile) 0 14px, #e9e9e9 14px 28px); }
 .contact-form-card { padding: clamp(18px, 2vw, 32px); border-radius: var(--radius); background: #fff; box-shadow: 0 0 0 1px var(--tile-2); }
 .contact-form-title { font-size: clamp(24px, 2vw, 34px); font-weight: 500; letter-spacing: -0.045em; }
+.contact-page .site-header { background: rgba(251, 251, 251, 0.86); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.info-company { grid-column: 1 / -1; align-content: start; }
+.company-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; margin: 0; }
+.company-list dt { color: var(--muted); font-size: 13px; }
+.company-list dd { margin: 2px 0 0; font-size: clamp(15px, 1.2vw, 18px); font-weight: 500; letter-spacing: -0.02em; }
+.footer-contact { display: flex; flex-wrap: wrap; gap: 8px 28px; font-style: normal; font-size: clamp(14px, 1.2vw, 18px); color: #cfcfcf; }
+.footer-contact a:hover { color: #fff; }
 .site-footer--compact { padding: clamp(28px, 5vh, 48px) var(--gutter); }
 .site-footer--compact .footer-legal { margin: 0; }
 @media (max-width: 900px) {

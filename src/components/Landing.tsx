@@ -5,7 +5,7 @@ import { SplitText } from 'gsap/SplitText';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { gsap, ScrollTrigger, useGSAP, motionOK } from '@/lib/gsap';
 import { observeLayout } from '@/lib/observeLayout';
-import { brands, copy, featuredIndex, fleet } from '@/content';
+import { brands, company, contact, copy, featuredIndex, fleet } from '@/content';
 import { SpecView } from '@/components/SpecView';
 import { asset } from '@/lib/asset';
 import { BookingDialog } from '@/components/BookingDialog';
@@ -472,9 +472,15 @@ export function Landing() {
         <h2 className="footer-title">Umów przewóz<br />na konkretny termin.</h2>
         <div className="footer-row">
           <a className="btn btn-light" href="#rezerwacja" onClick={(e) => openBooking(e)}>Przejdź do formularza</a>
-          <span className="muted">{copy.city} · 7 dni w tygodniu, 24 h na dobę</span>
+          {contact.phone && <a className="btn btn-soft" href={contact.phone.href}>{contact.phone.display}</a>}
+          <span className="muted">7 dni w tygodniu, 24 h na dobę</span>
         </div>
-        <p className="footer-legal muted">© {new Date().getFullYear()} PytlakBus</p>
+        <address className="footer-contact">
+          {contact.email && <a href={`mailto:${contact.email}`}>{contact.email}</a>}
+          {contact.address && <span>{contact.address}</span>}
+          <a href={company.website.href}>{company.website.display}</a>
+        </address>
+        <p className="footer-legal muted">© {new Date().getFullYear()} {company.name} · {company.owner} · NIP {company.nip} · REGON {company.regon}</p>
       </footer>
     </div>
     <BookingDialog open={booking.open} carId={booking.carId} onClose={closeBooking} getReturnFocus={() => bookingOpener.current} />

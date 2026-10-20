@@ -106,13 +106,9 @@ export const copy = {
   heroLead: 'Jesteśmy firmą z wieloletnim doświadczeniem w przewozie osób. Działamy 7 dni w tygodniu, 24 godziny na dobę.',
   statement: ['Dbamy o komfort,', 'bezpieczeństwo i zadowolenie', 'naszych Klientów.', 'Do każdego podchodzimy', 'indywidualnie.'],
   collection: 'Nowoczesna i zadbana flota: od Mercedesa Vito po Sprintera na 22 osoby. Dla instytucji i grup prywatnych.',
-  // Do potwierdzenia: docelowy adres formularza/kontaktu (na stronie klienta są jeszcze dane z szablonu).
-  contactUrl: 'https://new.pytlakprzewozy.pl/new/contacts/',
 };
 
-// Dane kontaktowe — DO UZUPEŁNIENIA. Strona klienta ma jeszcze dane z szablonu (Berlin, info@email.com, +1…),
-// dlatego pola są puste (null) i na stronie wyświetlają się jako „do uzupełnienia”.
-// Przykład po uzupełnieniu: phone: { display: '+48 600 700 800', href: 'tel:+48600700800' }
+// Dane kontaktowe i rejestrowe firmy (od klienta, 2026-10-20).
 export const contact: {
   phone: { display: string; href: string } | null;
   email: string | null;
@@ -120,11 +116,19 @@ export const contact: {
   mapUrl: string | null; // link do Map Google
   hours: string;
 } = {
-  phone: null,
-  email: null,
-  address: null,
-  mapUrl: null,
+  phone: { display: '+48 505 048 472', href: 'tel:+48505048472' },
+  email: 'bus@pytlakprzewozy.pl',
+  address: 'ul. Topolowa 1, 62-040 Puszczykowo',
+  mapUrl: 'https://www.google.com/maps/search/?api=1&query=ul.+Topolowa+1%2C+62-040+Puszczykowo',
   hours: '7 dni w tygodniu, 24 godziny na dobę',
+};
+
+export const company = {
+  name: 'Pytlak Przewozy',
+  owner: 'Jarosław Pytlak',
+  nip: '777-173-70-38',
+  regon: '362706751',
+  website: { display: 'www.pytlakprzewozy.pl', href: 'https://www.pytlakprzewozy.pl' },
 };
 
 export const nav = [

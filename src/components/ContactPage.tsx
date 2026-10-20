@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useId, useRef, useState, type FormEvent } from 'react';
 import { gsap, useGSAP, motionOK } from '@/lib/gsap';
-import { contact, copy } from '@/content';
+import { company, contact } from '@/content';
 
 type Errors = Partial<Record<'name' | 'reach' | 'message' | 'consent', string>>;
 const topics = ['Rezerwacja przewozu', 'Wycena przejazdu', 'Współpraca z firmą / instytucją', 'Inne'];
@@ -90,13 +90,21 @@ export function ContactPage() {
             </div>
             <div className="info-card" data-in>
               <p className="info-label">Lokalizacja</p>
-              {contact.address ? <p className="info-value">{contact.address}</p> : todo('Adres (ulica, kod, miasto)')}
-              <p className="info-note">Siedziba: {copy.city}</p>
+              {contact.address
+                ? <p className="info-value">{contact.address.split(', ').map((line, i) => <span key={i} className="nowrap">{line}</span>)}</p>
+                : todo('Adres (ulica, kod, miasto)')}
             </div>
-            <div className="info-card info-map" data-in>
+            <div className="info-card info-company" data-in>
+              <p className="info-label">Dane firmy</p>
+              <dl className="company-list">
+                <div><dt>Firma</dt><dd>{company.name}</dd></div>
+                <div><dt>Właściciel</dt><dd>{company.owner}</dd></div>
+                <div><dt>NIP</dt><dd>{company.nip}</dd></div>
+                <div><dt>REGON</dt><dd>{company.regon}</dd></div>
+              </dl>
               {contact.mapUrl
-                ? <a className="btn btn-dark" href={contact.mapUrl} target="_blank" rel="noopener noreferrer">Otwórz w Mapach Google</a>
-                : <>{todo('Mapa dojazdu')}<p className="info-note">Pojawi się po podaniu adresu.</p></>}
+                ? <a className="btn btn-dark" href={contact.mapUrl} target="_blank" rel="noopener noreferrer">Dojazd — Mapy Google</a>
+                : todo('Mapa dojazdu')}
             </div>
           </section>
 
@@ -152,7 +160,7 @@ export function ContactPage() {
       </main>
 
       <footer className="site-footer site-footer--compact">
-        <p className="footer-legal muted">© {new Date().getFullYear()} PytlakBus · {copy.city}</p>
+        <p className="footer-legal muted">© {new Date().getFullYear()} {company.name} · {company.owner} · {contact.address} · NIP {company.nip} · REGON {company.regon}</p>
       </footer>
     </div>
   );

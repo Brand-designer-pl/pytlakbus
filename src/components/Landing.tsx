@@ -16,7 +16,10 @@ import { MobileNav } from '@/components/MobileNav';
 gsap.registerPlugin(SplitText, ScrollToPlugin);
 
 // Momenty osi czasu sceny (jednostki timeline'u, nie sekundy).
-const T = { heroOut: 0.25, morph1: 0.9, statementIn: 1.7, statementHold: 3.3, statementOut: 3.9, morph2: 4.2, fleetIn: 5.3, collectionHold: 6.8, collectionOut: 7.0, feature: 7.7, detail: 8.6, end: 9.6 };
+// Bez martwych stref: każdy fragment scrolla porusza coś na ekranie (przystoje skrócone, w nich ciągły „dryf”).
+// Tło (wideo) zaczyna się kurczyć od pierwszego piksela scrolla, równocześnie z wygaszaniem tekstu hero.
+// Zasada: każde wejście/wyjście tekstu idzie w parze z ruchem obrazu lub tła (nigdy samo rozmycie).
+const T = { heroOut: 0, morph1: 0.02, statementIn: 1.15, statementHold: 2.75, statementOut: 3.1, morph2: 3.1, fleetIn: 4.2, collectionHold: 5.55, collectionOut: 5.75, feature: 6.4, detail: 7.3, end: 8.15 };
 // Etykiety etapów sceny (fokus klawiatury przewija do właściwego momentu).
 const stops = { hero: 0, statement: T.statementHold, collection: T.collectionHold, detail: T.end };
 // Czas, do którego przewijamy, gdy fokus klawiatury trafi do danej sceny.
@@ -87,6 +90,8 @@ export function Landing() {
       const statementSplit = SplitText.create(q('.statement-text'), { type: 'words', wordsClass: 'st-word' });
       const collectionSplit = SplitText.create(q('.collection-text'), { type: 'words', wordsClass: 'col-word' });
 
+      const lite = window.matchMedia('(max-width: 767px), (pointer: coarse)').matches;
+      const blur = (px: number) => (lite ? {} : { filter: `blur(${px}px)` });
       const g = { vw: 0, vh: 0, iw: 0, ih: 0, gap: 0, xStart: 0, yStart: 0, yMid: 0, scale: 1, mobile: false };
       const measure = () => {
         g.vw = stageEl.clientWidth; g.vh = stageEl.clientHeight; g.mobile = g.vw < 768;
@@ -128,9 +133,9 @@ export function Landing() {
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
-          trigger: stageEl, start: 'top top', end: () => '+=' + Math.round(stageEl.clientHeight * 8.5),
-          // Ciągłe, natywne przewijanie; scrub 1 wygładza podążanie animacji za scrollem.
-          pin: true, scrub: 1, invalidateOnRefresh: true,
+          trigger: stageEl, start: 'top top', end: () => '+=' + Math.round(stageEl.clientHeight * 7),
+          // Ciągłe, natywne przewijanie; scrub 0.6 — ruch od razu po każdym scrollu, nadal wygładzony.
+          pin: true, scrub: 0.6, invalidateOnRefresh: true,
           onUpdate: (self) => sync(self.progress * tl.duration()),
           onRefresh: (self) => sync(self.progress * tl.duration()),
         },
@@ -196,44 +201,50 @@ export function Landing() {
 
       // 1. Hero → wyjście treści z rozmyciem.
       tl.to(q('.scene-hero'), { '--scrim': 0, duration: 0.6 }, T.heroOut)
-        .to(q('.hero-title'), { opacity: 0, filter: 'blur(16px)', y: -24, duration: 0.7, ease: 'power1.in' }, T.heroOut + 0.05)
-        .to(q('.hero-lead, .hero-meta'), { opacity: 0, filter: 'blur(10px)', duration: 0.6, stagger: 0.06, ease: 'power1.in' }, T.heroOut)
+        .to(q('.hero-title'), { opacity: 0, ...blur(16), y: -24, duration: 0.7, ease: 'power1.in' }, T.heroOut + 0.05)
+        .to(q('.hero-lead, .hero-meta'), { opacity: 0, ...blur(10), duration: 0.6, stagger: 0.06, ease: 'power1.in' }, T.heroOut)
         // 2. Pełnoekranowe wideo kurczy się do zaokrąglonej karty.
         .fromTo(morph,
           { left: 0, top: 0, width: () => g.vw, height: () => g.vh, borderRadius: 0 },
           { left: () => cardSlot().left, top: () => cardSlot().top, width: () => cardSlot().width, height: () => cardSlot().height,
-            borderRadius: () => (g.mobile ? 16 : 22), duration: 1.2, ease: 'power2.inOut' }, T.morph1)
+            borderRadius: () => (g.mobile ? 16 : 22), duration: 1.2, ease: 'power2.out' }, T.morph1) // szybki start: ruch od pierwszego scrolla
+        .fromTo(heroVideo, { scale: 1 }, { scale: 1.12, duration: 1.2, ease: 'power1.inOut', immediateRender: false }, T.morph1)
         .to(header, { '--nav-fg': '#0b0b0b', '--nav-muted': '#9a9a9a', '--btn-bg': '#0b0b0b', '--btn-fg': '#ffffff', duration: 0.35 }, T.morph1 + 0.15)
         .to(profileVideo, { opacity: 1, duration: 0.45 }, T.morph1 + 0.85)
         // 3. Manifest: słowa wyostrzają się kolejno, marquee marek jedzie ze scrollem.
-        .fromTo(statementSplit.words, { opacity: 0, filter: 'blur(12px)', yPercent: 45 },
-          { opacity: 1, filter: 'blur(0px)', yPercent: 0, duration: 0.5, stagger: 0.04, ease: 'power2.out' }, T.statementIn)
+        .fromTo(statementSplit.words, { opacity: 0, ...blur(12), yPercent: 45 },
+          { opacity: 1, ...blur(0), yPercent: 0, duration: 0.5, stagger: 0.04, ease: 'power2.out' }, T.statementIn)
         .fromTo(q('.statement-cta'), { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, T.statementIn + 1.0)
         .fromTo(q('.brand-marquee'), { opacity: 0 }, { opacity: 1, duration: 0.4 }, T.statementIn + 0.3)
         .fromTo(q('.brand-track'), { xPercent: 0 }, { xPercent: -25, duration: 3 }, T.statementIn - 0.1)
-        .to(statementSplit.words, { opacity: 0, filter: 'blur(12px)', duration: 0.4, stagger: 0.012, ease: 'power1.in' }, T.statementOut)
+        .to(statementSplit.words, { opacity: 0, ...blur(12), duration: 0.4, stagger: 0.012, ease: 'power1.in' }, T.statementOut)
         .to(q('.statement-cta, .brand-marquee'), { opacity: 0, duration: 0.3 }, T.statementOut)
         // 4. Karta zjeżdża w dół i staje się szarym kafelkiem floty.
         .to(morph, { left: () => fleetSlot().left, top: () => fleetSlot().top, width: () => fleetSlot().width, height: () => fleetSlot().height,
           borderRadius: 12, duration: 1.1, ease: 'power2.inOut' }, T.morph2)
         .fromTo(q('.morph-veil'), { opacity: 0 }, { opacity: 1, duration: 0.5 }, T.morph2 + 0.55)
-        .fromTo(center.querySelector('.car'), { opacity: 0, filter: 'blur(10px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.4 }, T.fleetIn - 0.1)
+        .fromTo(center.querySelector('.car'), { opacity: 0, ...blur(10) }, { opacity: 1, ...blur(0), duration: 0.4 }, T.fleetIn - 0.1)
         .to(morph, { opacity: 0, duration: 0.35 }, T.fleetIn + 0.2)
-        .fromTo(others, { opacity: 0, filter: 'blur(14px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.5, stagger: { each: 0.06, from: 'center' } }, T.fleetIn)
+        .fromTo(others, { opacity: 0, ...blur(14) }, { opacity: 1, ...blur(0), duration: 0.5, stagger: { each: 0.06, from: 'center' } }, T.fleetIn)
         // 5. Rząd aut wjeżdża przez tekst kolekcji.
         .fromTo(q('.fleet-row'), { x: () => g.xStart }, { x: 0, duration: T.feature - T.fleetIn, ease: 'power1.inOut' }, T.fleetIn)
         .fromTo(q('.fleet-row'), { y: () => g.yStart }, { y: () => g.yMid, duration: T.collectionHold - T.fleetIn, ease: 'power2.out' }, T.fleetIn)
         .to(q('.fleet-row'), { y: 0, duration: T.feature - T.collectionOut, ease: 'power2.inOut' }, T.collectionOut)
-        .fromTo(collectionSplit.words, { opacity: 0, filter: 'blur(10px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.35, stagger: 0.035 }, T.fleetIn + 0.2)
-        .to(collectionSplit.words, { opacity: 0, filter: 'blur(12px)', duration: 0.4, stagger: 0.008, ease: 'power1.in' }, T.collectionOut)
+        .fromTo(collectionSplit.words, { opacity: 0, ...blur(10) }, { opacity: 1, ...blur(0), duration: 0.35, stagger: 0.035 }, T.fleetIn + 0.2)
+        .to(collectionSplit.words, { opacity: 0, ...blur(12), duration: 0.4, stagger: 0.008, ease: 'power1.in' }, T.collectionOut)
         // 6. Wybrane auto rośnie do centrum, sąsiedzi odjeżdżają rozmyci.
         .to(center, { scale: () => g.scale, y: () => -g.vh * (g.mobile ? 0.1 : 0.06), duration: 1, ease: 'power2.inOut' }, T.feature)
-        .to(left, { x: () => -g.vw * 0.28, opacity: 0, filter: 'blur(16px)', duration: 0.9, ease: 'power2.in' }, T.feature)
-        .to(right, { x: () => g.vw * 0.28, opacity: 0, filter: 'blur(16px)', duration: 0.9, ease: 'power2.in' }, T.feature)
+        .to(left, { x: () => -g.vw * 0.28, opacity: 0, ...blur(16), duration: 0.9, ease: 'power2.in' }, T.feature)
+        .to(right, { x: () => g.vw * 0.28, opacity: 0, ...blur(16), duration: 0.9, ease: 'power2.in' }, T.feature)
         // 7. Panel szczegółów wjeżdża kafelkami.
-        .fromTo(q('.detail-item'), { opacity: 0, y: 40, filter: 'blur(6px)' },
-          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.5, stagger: 0.08, ease: 'power2.out' }, T.detail)
-        .to({}, { duration: 0.3 }, T.end - 0.3);
+        .fromTo(q('.detail-item'), { opacity: 0, y: 40, ...blur(6) },
+          { opacity: 1, y: 0, ...blur(0), duration: 0.5, stagger: 0.08, ease: 'power2.out' }, T.detail)
+        // 8. Ciągły dryf wypełniający przystoje: wideo w karcie powoli się przybliża, teksty lekko płyną.
+        .fromTo(q('.morph-profile'), { scale: 1.24, xPercent: -4 }, { scale: 1, xPercent: 4, duration: T.morph2 + 0.6 - (T.morph1 + 0.5), ease: 'none' }, T.morph1 + 0.5)
+        .fromTo(q('.statement'), { y: 40 }, { y: -40, duration: T.morph2 - T.statementIn, ease: 'none' }, T.statementIn)
+        .fromTo(q('.collection-text'), { yPercent: -54 }, { yPercent: -70, duration: T.feature - T.fleetIn, ease: 'none' }, T.fleetIn)
+        .fromTo(center.querySelector('.car'), { y: 0, scale: 1 }, { y: () => -g.vh * 0.035, scale: 1.05, duration: T.end - T.detail + 0.1, ease: 'power1.out' }, T.detail - 0.1)
+        .to({}, { duration: 0.1 }, T.end - 0.1);
 
       const stopObserving = observeLayout(stageEl);
       const onVisibility = contextSafe!(() => { if (document.hidden) { heroVideo.pause(); profileVideo.pause(); heroPlaying = profilePlaying = false; } else sync(tl.scrollTrigger!.progress * tl.duration()); });

@@ -123,6 +123,10 @@ ul { padding: 0; list-style: none; }
 .is-staged .car img { width: calc(88% * var(--s, 1)); }
 .is-staged .detail-bar { position: absolute; left: var(--gutter); right: var(--gutter); bottom: clamp(16px, 2.6vh, 32px); }
 .st-word, .col-word, .intro-word { will-change: transform, opacity, filter; }
+.is-staged .morph { contain: strict; } /* przeliczenia kurczącej się karty nie wychodzą poza nią */
+@media (max-width: 767px), (pointer: coarse) {
+  .st-word, .col-word, .intro-word { will-change: auto; } /* na telefonach bez rozmycia — mniej warstw do składania */
+}
 
 /* ---------- Specyfikacja (widok w obrębie strony) ---------- */
 html { scrollbar-gutter: stable; }

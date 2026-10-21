@@ -149,3 +149,79 @@ export const booking = {
   ],
   maxPeople: 60,
 };
+
+// ——— Treści podstron SEO (ze starej strony www.pytlakprzewozy.pl: /oferta2/, /o-nas/, strona główna; 2026-10-21) ———
+export const site = {
+  url: 'https://www.pytlakprzewozy.pl',
+  name: 'Pytlak Przewozy',
+  brand: 'PytlakBus',
+};
+
+// Obszar działania potwierdzony przez klienta (jak na starej stronie).
+export const area = ['Puszczykowo', 'Poznań', 'Mosina', 'Luboń', 'Wielkopolska'];
+
+export const offer = {
+  lead: 'Ofertę kierujemy zarówno do przedstawicieli instytucji, jak i do grup osób prywatnych. Do każdego klienta podchodzimy indywidualnie i z pełnym zrozumieniem jego potrzeb. Jesteśmy otwarci na sugestie i dokładamy starań, aby każdy klient był zadowolony i chętnie do nas wracał.',
+  services: [
+    'Transfery z lotnisk i hoteli',
+    'Wycieczki',
+    'Wyjazdy na szkolenia',
+    'Wyjazdy na spotkania biznesowe, targi i konferencje',
+    'Wyjazdy integracyjne',
+    'Imprezy rodzinne: śluby, wesela, komunie i inne',
+    'Wyjazdy objazdowe',
+    'Wyjazdy wakacyjne',
+    'Wyjazdy sportowe na turnieje i mecze',
+    'Przejazdy pracownicze',
+    'Pojazd z kierowcą do dyspozycji wynajmującego',
+    'Wszelkie indywidualne życzenia',
+  ],
+};
+
+export const about = {
+  paragraphs: [
+    'Firma Pytlak Przewozy Jarosław Pytlak świadczy usługi przewozu osób. Jesteśmy firmą z wieloletnim doświadczeniem w branży przewozu osób.',
+    'Posiadamy Certyfikat Kompetencji Zawodowych w Krajowym i Międzynarodowym Przewozie Osób oraz Licencję na Wykonywanie Krajowego Przewozu Osób — potwierdzone przez Instytut Transportu Samochodowego.',
+    'Od początku istnienia dokładamy wszelkich starań, aby nasze usługi były zawsze na najwyższym poziomie i spełniały wymagania oraz oczekiwania Klientów. Dbamy o komfort, bezpieczeństwo i zadowolenie pasażerów — zarówno na krótkich, jak i na dalekich trasach.',
+    'W naszych szeregach są profesjonalni kierowcy, którzy zapewnią Państwu bezpieczeństwo i komfort jazdy. Współpracujemy z wieloma instytucjami: uczelniami, szkołami, firmami i innymi.',
+    'Do każdego zamówienia podchodzimy indywidualnie i oferujemy atrakcyjne stawki. Serdecznie zapraszamy do współpracy!',
+  ],
+  values: [
+    { title: 'Profesjonalizm', text: 'Wychodząc naprzeciw Twoim oczekiwaniom, działamy 7 dni w tygodniu i 24 godziny na dobę. Do każdego zlecenia podchodzimy indywidualnie.' },
+    { title: 'Bezpieczeństwo', text: 'Bezpieczeństwo klientów i kierowców jest dla nas wartością nadrzędną. Nasi kierowcy to osoby z wieloletnim doświadczeniem, do pracy przystępujące zawsze wypoczęte.' },
+    { title: 'Jakość', text: 'Dokładamy wszelkich starań, aby nasze usługi były zawsze na najwyższym poziomie.' },
+    { title: 'Środowisko', text: 'W trosce o środowisko nasze pojazdy spełniają najwyższe normy emisji spalin, potwierdzone adnotacjami w dowodach rejestracyjnych.' },
+  ],
+};
+
+// Metadane podstron (title/description/H1) — frazy lokalne ze starej strony, bez wymyślonych danych.
+export const pages = {
+  home: {
+    title: 'Przewóz osób i wynajem busów z kierowcą — Puszczykowo, Poznań | Pytlak Przewozy',
+    description: 'Przewóz osób busami 7 dni w tygodniu, 24 h na dobę: transfery z lotnisk, wycieczki, wyjazdy firmowe i rodzinne. Flota 6–24 miejsc. Puszczykowo, Poznań, Mosina, Luboń.',
+  },
+  oferta: {
+    title: 'Oferta — transfery z lotniska, wycieczki, wyjazdy firmowe | Pytlak Przewozy',
+    description: 'Przewozy dla firm, instytucji i osób prywatnych: transfery z lotnisk i hoteli, wycieczki, szkolenia, targi, wesela, wyjazdy sportowe i pracownicze. Puszczykowo i Poznań.',
+    h1: 'Przewóz osób i wynajem busów z kierowcą',
+  },
+  flota: {
+    title: 'Flota — busy 6–24 miejsc: Mercedes Sprinter, V-Class, Vito | Pytlak Przewozy',
+    description: 'Nowoczesne busy z kierowcą: Mercedes Sprinter 519 CDI (20+1 i 22+2), Mercedes-Benz V250d, Vito, Toyota Proace, Renault Trafic. Klimatyzacja, przyciemniane szyby, pasy na każdym miejscu.',
+    h1: 'Nasza flota',
+  },
+  oNas: {
+    title: 'O nas — przewóz osób z licencją ITS | Pytlak Przewozy, Puszczykowo',
+    description: 'Pytlak Przewozy Jarosław Pytlak — wieloletnie doświadczenie w przewozie osób, Certyfikat Kompetencji Zawodowych i licencja potwierdzone przez Instytut Transportu Samochodowego.',
+    h1: 'O firmie Pytlak Przewozy',
+  },
+  kontakt: {
+    title: 'Kontakt — Pytlak Przewozy, Puszczykowo | tel. +48 505 048 472',
+    description: 'Zadzwoń lub napisz: tel. +48 505 048 472, bus@pytlakprzewozy.pl, ul. Topolowa 1, 62-040 Puszczykowo. Przewóz osób 7 dni w tygodniu, 24 h na dobę.',
+  },
+  polityka: {
+    title: 'Polityka prywatności i plików cookies | Pytlak Przewozy',
+    description: 'Informacje o przetwarzaniu danych osobowych (RODO) i plikach cookies w serwisie www.pytlakprzewozy.pl.',
+    h1: 'Polityka prywatności',
+  },
+};

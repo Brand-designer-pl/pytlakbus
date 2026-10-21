@@ -1,0 +1,64 @@
+# www.pytlakprzewozy.pl — statyczna strona (Next.js export) na Apache (DirectAdmin).
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+AddDefaultCharset UTF-8
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+# 1. Stare adresy WordPressa → najbliższa nowa treść jednym przekierowaniem 301 (zachowuje pozycje w Google).
+RewriteRule ^o-firmie/?$ https://www.pytlakprzewozy.pl/o-nas/ [L,R=301]
+RewriteRule ^oferta2/?$ https://www.pytlakprzewozy.pl/oferta/ [L,R=301]
+RewriteRule ^produkty/oferta/?$ https://www.pytlakprzewozy.pl/flota/ [L,R=301]
+RewriteRule ^produkty/?$ https://www.pytlakprzewozy.pl/flota/ [L,R=301]
+RewriteRule ^mercedes-sprinter/?$ https://www.pytlakprzewozy.pl/flota/#sprinter21 [L,R=301,NE]
+RewriteRule ^mercedes-vito-71/?$ https://www.pytlakprzewozy.pl/flota/#vito [L,R=301,NE]
+RewriteRule ^renault-trafic-81/?$ https://www.pytlakprzewozy.pl/flota/#trafic150 [L,R=301,NE]
+RewriteRule ^(opel-vivaro-81|opel-vivaro-81-biturbo|volkswagen-passat)/?$ https://www.pytlakprzewozy.pl/flota/ [L,R=301]
+RewriteRule ^aktualnosci(/.*)?$ https://www.pytlakprzewozy.pl/o-nas/ [L,R=301]
+RewriteRule ^(news|galeria)/?$ https://www.pytlakprzewozy.pl/ [L,R=301]
+RewriteRule ^(polityka-plikow-cookies|regulamin-rodo)/?$ https://www.pytlakprzewozy.pl/polityka-prywatnosci/ [L,R=301]
+RewriteRule ^(wp-sitemap.*\.xml|sitemap_index\.xml)$ https://www.pytlakprzewozy.pl/sitemap.xml [L,R=301]
+
+# 2. Jedna wersja adresu: https + www (tylko dla domeny pytlakprzewozy.pl).
+RewriteCond %{HTTP_HOST} ^(www\.)?pytlakprzewozy\.pl$ [NC]
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^pytlakprzewozy\.pl$ [NC]
+RewriteRule ^ https://www.pytlakprzewozy.pl%{REQUEST_URI} [L,R=301,NE]
+
+# 3. Stare krótkie adresy WP (?p=, ?page_id=) → strona główna; newsletter (?wysijap=) → usunięty.
+RewriteCond %{QUERY_STRING} (^|&)wysijap= [NC]
+RewriteRule ^ - [G]
+RewriteCond %{QUERY_STRING} (^|&)(p|page_id|cat)=\d+ [NC]
+RewriteRule ^$ https://www.pytlakprzewozy.pl/? [L,R=301]
+
+# 4. Treści WordPressa bez odpowiednika → 410 (usunięte na stałe).
+RewriteRule ^(logosliderwp|author|feed|comments|wp-admin|wp-content|wp-includes|wp-json)(/.*)?$ - [G]
+RewriteRule ^(wp-login|xmlrpc|wp-cron|wp-signup|wp-activate|wp-trackback|wp-comments-post|wp-mail|phpinfo)\.php$ - [G]
+</IfModule>
+
+# 5. Cache: pliki Next.js z hashem w nazwie na rok, media na miesiąc, HTML zawsze świeży. Kompresja tekstu.
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set X-Frame-Options "SAMEORIGIN"
+  <If "%{REQUEST_URI} =~ m#^/_next/static/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+  <FilesMatch "\.(html|xml|txt)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/webp "access plus 1 month"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType image/jpeg "access plus 1 month"
+  ExpiresByType video/mp4 "access plus 1 month"
+  ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml text/plain text/xml application/xml
+</IfModule>

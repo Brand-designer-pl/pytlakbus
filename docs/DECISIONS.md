@@ -77,3 +77,14 @@ Ceny, opisy aut, liczba miast (+N), e-mail i godziny w stopce to placeholdery do
 - Uzupełnione wszędzie: podstrona Kontakt (kafle + „Dane firmy” z dojazdem), stopki obu stron, karta „Zadzwoń” i przycisk w rezerwacji. Brak pozostałych znaczników „do uzupełnienia”.
 - Kontakt: adres w dwóch liniach (bez łamania kodu pocztowego), jasne tło nagłówka podstrony (wcześniej nachodził na treść przy przewijaniu).
 - Uwaga środowiskowa: iCloud wyładował node_modules i .next (pliki „dataless”) — przywrócone przez `npm ci`; źródła i media były nienaruszone.
+
+## 2026-10-21 — przygotowanie do publikacji na www.pytlakprzewozy.pl (z zachowaniem SEO)
+- Stara strona (WordPress) zabezpieczona: pliki (10 127, 393 MB) + baza pytlak_regio2 (60 tabel) w `../kopia-wordpress-2026-10-20/`.
+- Analiza SEO starej strony: wszystkie podstrony miały ten sam opis, H1 „newsletter”, frazy tylko w meta keywords. Przeniesione frazy lokalne (przewóz osób, wynajem busów, transfery z lotniska; Puszczykowo, Poznań, Mosina, Luboń) do tytułów, opisów, H1 i treści.
+- Nowe podstrony z treścią starej strony: /oferta/ (12 usług), /flota/ (pełne specyfikacje w HTML, kotwice pojazdów), /o-nas/ (tekst + „Dlaczego my?”), /polityka-prywatnosci/ (PROJEKT do akceptacji klienta — wcześniejsza polityka wskazywała „RegioBiznes s.c.” i GIODO, regulamin RODO był pusty). Strona główna: sekcja oferty i obszaru działania w HTML.
+- SEO techniczne: canonical https://www…, Open Graph + /og.jpg, LocalBusiness JSON-LD (dane od klienta), sitemap.xml, robots.txt, favicon, prawdziwe 404, noindex wyłącznie na podglądzie GitHub Pages (NEXT_PUBLIC_NOINDEX).
+- Mapa przekierowań (.htaccess, jednoskokowe 301 na https://www): /o-firmie/→/o-nas/, /oferta2/→/oferta/, /produkty/oferta/→/flota/, wpisy pojazdów→/flota/(#kotwica), /aktualnosci/*→/o-nas/, /news/ i /galeria/→/, polityka cookies i regulamin RODO→/polityka-prywatnosci/, wp-sitemap→/sitemap.xml, ?p=→/; 410: logosliderwp, author, feed, wp-*, ?wysijap=. Sprawdzone lokalnym Apache 2.4.
+- Menu: prawdziwe linki do podstron (Start, Oferta, Flota, O nas, Kontakt); na stronie głównej „Flota” nadal przewija do karuzeli. Na telefonie przycisk „Menu” (pełnoekranowa lista, portal do body). Nagłówek dostaje tło poniżej sceny.
+- Formularze: `public/api/wyslij.php` (mail() → bus@pytlakprzewozy.pl; honeypot, min. czas 3 s, limit 5/10 min na IP, kontrola Origin). Serwer: PHP 8.3, mbstring, sendmail — sprawdzone w phpinfo starej strony. Składnia PHP do sprawdzenia na serwerze (brak PHP lokalnie).
+- Recenzja Codexa NIE wykonana: brak Codex CLI na komputerze (`npm install -g @openai/codex`, potem `/codex:setup`). Zamiast niej własny przegląd bezpieczeństwa PHP i reguł .htaccess.
+- Znane: ostrzeżenie konsoli o preload zdjęcia V250d przy prefetchu /flota/ — celowe, przyspiesza przejście.

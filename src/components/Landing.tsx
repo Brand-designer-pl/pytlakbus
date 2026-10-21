@@ -5,10 +5,13 @@ import { SplitText } from 'gsap/SplitText';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { gsap, ScrollTrigger, useGSAP, motionOK } from '@/lib/gsap';
 import { observeLayout } from '@/lib/observeLayout';
-import { brands, company, contact, copy, featuredIndex, fleet } from '@/content';
+import { brands, copy, featuredIndex, fleet } from '@/content';
 import { SpecView } from '@/components/SpecView';
 import { asset } from '@/lib/asset';
 import { BookingDialog } from '@/components/BookingDialog';
+import { HomeOffer } from '@/components/HomeOffer';
+import { SiteFooter } from '@/components/SiteChrome';
+import { MobileNav } from '@/components/MobileNav';
 
 gsap.registerPlugin(SplitText, ScrollToPlugin);
 
@@ -267,6 +270,9 @@ export function Landing() {
       setPaused(true);
       ScrollTrigger.create({ trigger: q('.scene-hero')[0], start: 'bottom top+=72', end: 'max', toggleClass: { targets: header, className: 'is-light' } });
     });
+    // Poniżej sceny (sekcja oferty, stopka) nagłówek dostaje jasne tło, żeby nie nachodził na tekst.
+    ScrollTrigger.create({ trigger: q('.home-offer')[0], start: 'top top+=80', end: 'max', toggleClass: { targets: header, className: 'is-solid' } });
+
     return () => { mm.revert(); goRef.current = null; };
   }, { scope: root });
 
@@ -324,9 +330,11 @@ export function Landing() {
   // Wejście z adresem /#rezerwacja (np. przycisk „Zarezerwuj” na podstronie Kontakt) otwiera rezerwację.
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      if (window.location.hash !== '#rezerwacja') return;
-      window.history.replaceState({ booking: true }, '', '#rezerwacja');
-      setBooking({ open: true, carId: null });
+      const m = window.location.hash.match(/^#rezerwacja(?:-([a-z0-9]+))?$/);
+      if (!m) return;
+      const carId = m[1] && fleet.some((c) => c.id === m[1]) ? m[1] : null;
+      window.history.replaceState({ booking: true }, '', window.location.hash);
+      setBooking({ open: true, carId });
     }, 150);
     return () => window.clearTimeout(timer);
   }, []);
@@ -357,18 +365,21 @@ export function Landing() {
     <>
     <div ref={root} className="site" inert={booking.open}>
       <header className="site-header">
-        <a className="logo" href="#start" data-intro="nav" aria-label="PytlakBus — strona główna" onClick={(e) => goToAnchor(e, 'start')}>
+        <Link className="logo" href="/" data-intro="nav" aria-label="PytlakBus — strona główna" onClick={(e) => goToAnchor(e, 'start')}>
           <span className="logo-img" aria-hidden="true" />
-        </a>
+        </Link>
         <nav aria-label="Menu główne">
           <ul className="nav-links">
-            <li><a href="#start" className="is-current" data-intro="nav" aria-current="page" onClick={(e) => goToAnchor(e, 'start')}>Start</a></li>
-            <li><a href="#flota" data-intro="nav" onClick={(e) => goToAnchor(e, 'flota')}>Flota</a></li>
-            <li><a href="#o-nas" data-intro="nav" onClick={(e) => goToAnchor(e, 'o-nas')}>O nas</a></li>
-            <li><Link href="/kontakt" data-intro="nav">Kontakt</Link></li>
+            <li><Link href="/" className="is-current" data-intro="nav" aria-current="page" onClick={(e) => goToAnchor(e, 'start')}>Start</Link></li>
+            <li><Link href="/oferta/" data-intro="nav">Oferta</Link></li>
+            {/* Na stronie głównej „Flota” przewija do karuzeli (prośba klienta); bez sceny prowadzi do podstrony /flota/. */}
+            <li><Link href="/flota/" data-intro="nav" onClick={(e) => goToAnchor(e, 'flota')}>Flota</Link></li>
+            <li><Link href="/o-nas/" data-intro="nav">O nas</Link></li>
+            <li><Link href="/kontakt/" data-intro="nav">Kontakt</Link></li>
           </ul>
         </nav>
         <a className="btn btn-nav" href="#rezerwacja" data-intro="cta" onClick={(e) => openBooking(e)}>Zarezerwuj</a>
+        <MobileNav current="/" onReserve={(e) => openBooking(e)} />
       </header>
 
       <main id="main" ref={stage} className="stage" onFocusCapture={onFocusCapture}>
@@ -467,21 +478,9 @@ export function Landing() {
         onReserve={(e) => openBooking(e, car.id)}
       />
 
-      <footer id="contact" className="site-footer">
-        <p className="footer-kicker">Zapytaj o termin</p>
-        <h2 className="footer-title">Umów przewóz<br />na konkretny termin.</h2>
-        <div className="footer-row">
-          <a className="btn btn-light" href="#rezerwacja" onClick={(e) => openBooking(e)}>Przejdź do formularza</a>
-          {contact.phone && <a className="btn btn-soft" href={contact.phone.href}>{contact.phone.display}</a>}
-          <span className="muted">7 dni w tygodniu, 24 h na dobę</span>
-        </div>
-        <address className="footer-contact">
-          {contact.email && <a href={`mailto:${contact.email}`}>{contact.email}</a>}
-          {contact.address && <span>{contact.address}</span>}
-          <a href={company.website.href}>{company.website.display}</a>
-        </address>
-        <p className="footer-legal muted">© {new Date().getFullYear()} {company.name} · {company.owner} · NIP {company.nip} · REGON {company.regon}</p>
-      </footer>
+      <HomeOffer />
+
+      <SiteFooter onReserve={(e) => openBooking(e)} />
     </div>
     <BookingDialog open={booking.open} carId={booking.carId} onClose={closeBooking} getReturnFocus={() => bookingOpener.current} />
     </>

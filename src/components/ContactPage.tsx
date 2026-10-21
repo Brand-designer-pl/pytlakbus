@@ -1,8 +1,10 @@
 'use client';
 import Link from 'next/link';
-import { useId, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { gsap, useGSAP, motionOK } from '@/lib/gsap';
 import { company, contact } from '@/content';
+import { SiteFooter, SiteHeader } from '@/components/SiteChrome';
+import { sendErrorText, sendForm } from '@/lib/sendForm';
 
 type Errors = Partial<Record<'name' | 'reach' | 'message' | 'consent', string>>;
 const topics = ['Rezerwacja przewozu', 'Wycena przejazdu', 'Współpraca z firmą / instytucją', 'Inne'];
@@ -19,6 +21,10 @@ export function ContactPage() {
   const [consent, setConsent] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
+  const [sendError, setSendError] = useState('');
+  const [honeypot, setHoneypot] = useState('');
+  const startedAt = useRef(0);
+  useEffect(() => { startedAt.current = Date.now(); }, []);
 
   // Wejście jak na stronie głównej: rozmyte elementy wyostrzają się kaskadowo.
   useGSAP(() => {
@@ -47,8 +53,13 @@ export function ContactPage() {
     const first = Object.keys(e)[0];
     if (first) { root.current?.querySelector<HTMLElement>(`[data-field="${first}"]`)?.focus(); return; }
     setStatus('sending');
-    // TODO: podłączyć wysyłkę (endpoint / e-mail firmy). Na razie tylko potwierdzenie w interfejsie.
-    window.setTimeout(() => setStatus('sent'), 700);
+    setSendError('');
+    void sendForm({ type: 'kontakt', website: honeypot, startedAt: startedAt.current, name, phone, email, topic, message, consent })
+      .then((result) => {
+        if (result.ok) { setStatus('sent'); return; }
+        setStatus('idle');
+        setSendError(sendErrorText[result.reason]);
+      });
   };
 
   const err = (k: keyof Errors) => errors[k] ? { 'aria-invalid': true, 'aria-describedby': `${uid}-${k}-err` } : {};
@@ -57,20 +68,9 @@ export function ContactPage() {
 
   return (
     <div ref={root} className="contact-page">
-      <header className="site-header is-light">
-        <Link className="logo" href="/" aria-label="PytlakBus — strona główna"><span className="logo-img" aria-hidden="true" /></Link>
-        <nav aria-label="Menu główne">
-          <ul className="nav-links">
-            <li><Link href="/#start">Start</Link></li>
-            <li><Link href="/#flota">Flota</Link></li>
-            <li><Link href="/#o-nas">O nas</Link></li>
-            <li><Link href="/kontakt" className="is-current" aria-current="page">Kontakt</Link></li>
-          </ul>
-        </nav>
-        <Link className="btn btn-nav" href="/#rezerwacja">Zarezerwuj</Link>
-      </header>
+      <SiteHeader current="/kontakt/" />
 
-      <main id="main" className="contact-main">
+      <main id="main" className="contact-main page-main">
         <section className="contact-hero" aria-labelledby={`${uid}-title`}>
           <p className="contact-kicker" data-in>Kontakt</p>
           <h1 id={`${uid}-title`} className="contact-title" data-in>Porozmawiajmy<br />o Twoim przewozie.</h1>
@@ -149,6 +149,12 @@ export function ContactPage() {
                   </label>
                   {errorText('consent')}
                 </div>
+                <input className="hp-field" type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
+                {sendError && (
+                  <p className="send-error" role="alert">
+                    {sendError} {contact.phone && <>Zadzwoń: <a href={contact.phone.href}>{contact.phone.display}</a> lub napisz: <a href={`mailto:${contact.email}`}>{contact.email}</a></>}
+                  </p>
+                )}
                 <div className="booking-actions">
                   <button type="submit" className="btn btn-dark" disabled={status === 'sending'}>{status === 'sending' ? 'Wysyłanie…' : 'Wyślij wiadomość'}</button>
                   <Link className="btn btn-soft" href="/#rezerwacja">Zarezerwuj przewóz</Link>
@@ -159,9 +165,7 @@ export function ContactPage() {
         </div>
       </main>
 
-      <footer className="site-footer site-footer--compact">
-        <p className="footer-legal muted">© {new Date().getFullYear()} {company.name} · {company.owner} · {contact.address} · NIP {company.nip} · REGON {company.regon}</p>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

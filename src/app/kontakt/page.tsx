@@ -1,11 +1,14 @@
-import type { Metadata } from 'next';
 import { ContactPage } from '@/components/ContactPage';
+import { pages } from '@/content';
+import { LocalBusinessJsonLd, pageMeta } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: 'Kontakt — PytlakBus',
-  description: 'Zadzwoń albo napisz — przewóz osób 7 dni w tygodniu, 24 godziny na dobę.',
-};
+export const metadata = pageMeta({ ...pages.kontakt, path: '/kontakt/' });
 
 export default function Page() {
-  return <ContactPage />;
+  return (
+    <>
+      <LocalBusinessJsonLd />
+      <ContactPage />
+    </>
+  );
 }

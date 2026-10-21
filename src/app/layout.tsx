@@ -2,12 +2,16 @@ import type { Metadata, Viewport } from 'next';
 import { Inter_Tight } from 'next/font/google';
 import './globals.css';
 import { asset } from '@/lib/asset';
+import { pages, site } from '@/content';
+import { noindex } from '@/lib/seo';
 
 const sans = Inter_Tight({ subsets: ['latin', 'latin-ext'], variable: '--font-sans', display: 'swap' });
 
 export const metadata: Metadata = {
-  title: 'PytlakBus — Bezpieczeństwo i komfort podróży',
-  description: 'Przewóz osób 7 dni w tygodniu, 24 godziny na dobę. Nowoczesna flota od Mercedesa Vito po Sprintera.',
+  metadataBase: new URL(site.url),
+  title: pages.home.title,
+  description: pages.home.description,
+  robots: noindex ? { index: false, follow: false } : undefined,
 };
 export const viewport: Viewport = { themeColor: '#000000' };
 

@@ -2,6 +2,7 @@
 import { useEffect, useId, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import { gsap, useGSAP } from '@/lib/gsap';
 import { booking, contact, fleet } from '@/content';
+import { sendErrorText, sendForm } from '@/lib/sendForm';
 
 type Props = { open: boolean; onClose: () => void; carId: string | null; getReturnFocus: () => HTMLElement | null };
 type Errors = Partial<Record<'people' | 'duration' | 'date' | 'time' | 'name' | 'phone' | 'consent', string>>;
@@ -23,7 +24,9 @@ export function BookingDialog({ open, onClose, carId, getReturnFocus }: Props) {
   const firstFocus = useRef<HTMLElement>(null);
   const tl = useRef<gsap.core.Timeline | null>(null);
   const uid = useId();
-  const sendTimer = useRef(0);
+  const startedAt = useRef(0);
+  const [sendError, setSendError] = useState('');
+  const [honeypot, setHoneypot] = useState('');
 
   const [vehicle, setVehicle] = useState('any');
   const [people, setPeople] = useState(4);
@@ -43,7 +46,7 @@ export function BookingDialog({ open, onClose, carId, getReturnFocus }: Props) {
   const [wasOpen, setWasOpen] = useState(open);
   if (open !== wasOpen) {
     setWasOpen(open);
-    if (open) { setVehicle(carId ?? 'any'); setStatus('idle'); setErrors({}); }
+    if (open) { setVehicle(carId ?? 'any'); setStatus('idle'); setErrors({}); setSendError(''); }
   }
 
   useGSAP(() => {
@@ -78,7 +81,8 @@ export function BookingDialog({ open, onClose, carId, getReturnFocus }: Props) {
     window.addEventListener('keydown', onKey, true);
     return () => window.removeEventListener('keydown', onKey, true);
   }, [open, onClose]);
-  useEffect(() => () => { document.documentElement.classList.remove('booking-lock'); window.clearTimeout(sendTimer.current); }, []);
+  useEffect(() => () => document.documentElement.classList.remove('booking-lock'), []);
+  useEffect(() => { if (open) startedAt.current = Date.now(); }, [open]);
 
   const validate = (): Errors => {
     const e: Errors = {};
@@ -102,11 +106,18 @@ export function BookingDialog({ open, onClose, carId, getReturnFocus }: Props) {
       return;
     }
     setStatus('sending');
-    // TODO: podłączyć wysyłkę (endpoint / e-mail firmy). Na razie tylko potwierdzenie w interfejsie.
-    sendTimer.current = window.setTimeout(() => {
-      setStatus('sent');
-      panel.current!.scrollTop = 0;
-    }, 700);
+    setSendError('');
+    void sendForm({
+      type: 'rezerwacja', website: honeypot, startedAt: startedAt.current,
+      date: date ? `${longFmt.format(date)} (${iso(date)})` : '', time, people: String(people),
+      duration: booking.durations.find((d) => d.id === duration)?.label ?? duration,
+      vehicle: fleet.find((c) => c.id === vehicle)?.name ?? 'Dobierzcie pojazd do liczby osób',
+      route, name, phone, email, notes, consent,
+    }).then((result) => {
+      if (result.ok) { setStatus('sent'); if (panel.current) panel.current.scrollTop = 0; return; }
+      setStatus('idle');
+      setSendError(sendErrorText[result.reason]);
+    });
   };
 
   useGSAP(() => {
@@ -254,6 +265,13 @@ export function BookingDialog({ open, onClose, carId, getReturnFocus }: Props) {
               {errorText('consent')}
             </div>
 
+            {/* Pole-pułapka na boty — niewidoczne i pomijane przez czytniki ekranu. */}
+            <input className="hp-field" type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
+            {sendError && (
+              <p className="send-error" role="alert">
+                {sendError} {contact.phone && <>Zadzwoń: <a href={contact.phone.href}>{contact.phone.display}</a></>}
+              </p>
+            )}
             <div className="booking-actions" data-book-in>
               <button type="submit" className="btn btn-dark" disabled={status === 'sending'}>{status === 'sending' ? 'Wysyłanie…' : 'Wyślij zgłoszenie'}</button>
               {contact.phone && <a className="btn btn-soft" href={contact.phone.href}>Zadzwoń</a>}

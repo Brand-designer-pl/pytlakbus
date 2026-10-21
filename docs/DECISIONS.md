@@ -88,3 +88,10 @@ Ceny, opisy aut, liczba miast (+N), e-mail i godziny w stopce to placeholdery do
 - Formularze: `public/api/wyslij.php` (mail() → bus@pytlakprzewozy.pl; honeypot, min. czas 3 s, limit 5/10 min na IP, kontrola Origin). Serwer: PHP 8.3, mbstring, sendmail — sprawdzone w phpinfo starej strony. Składnia PHP do sprawdzenia na serwerze (brak PHP lokalnie).
 - Recenzja Codexa NIE wykonana: brak Codex CLI na komputerze (`npm install -g @openai/codex`, potem `/codex:setup`). Zamiast niej własny przegląd bezpieczeństwa PHP i reguł .htaccess.
 - Znane: ostrzeżenie konsoli o preload zdjęcia V250d przy prefetchu /flota/ — celowe, przyspiesza przejście.
+
+## 2026-10-21 — publikacja na www.pytlakprzewozy.pl
+- Wdrożono `scripts/deploy.py go --archive stara-strona-wordpress-2026-10-21` (81 plików, 9,3 MB). Stary WordPress: `/stara-strona-wordpress-2026-10-21` na koncie FTP (poza public_html). Powrót: `scripts/deploy.py rollback --archive stara-strona-wordpress-2026-10-21`.
+- Sprawdzone na żywo: 6 podstron + sitemap/robots 200, 404 dla nieistniejących, http/bez www → https://www jednym 301, wszystkie stare adresy WP → 301 zgodnie z mapą, 410 dla śmieci (wp-admin, wp-login, phpinfo, author, logosliderwp, ?wysijap=), cache_gzip.php niedostępny.
+- Formularze: wyslij.php odrzuca GET (405), obce Origin (403), zły format (400), braki (422), bot → cichy 200. Wysłano po jednym zgłoszeniu TEST z formularza kontaktowego i rezerwacji (za zgodą użytkownika) — serwer przyjął oba; dostarczenie do skrzynki bus@ potwierdza klient.
+- Polityka prywatności opublikowana jako projekt za zgodą użytkownika — do akceptacji klienta.
+- Do zrobienia po stronie klienta: Google Search Console (weryfikacja domeny, zgłoszenie sitemap.xml), aktualizacja wizytówki Google (adres strony https://www…).

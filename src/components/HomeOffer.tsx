@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { about, area, offer } from '@/content';
+import { ServiceIcon } from '@/components/ServiceIcon';
 
 /** Sekcja pod sceną: oferta i obszar działania w zwykłym HTML (treść dla Google i dla osób bez animacji). */
 export function HomeOffer() {
@@ -12,7 +13,7 @@ export function HomeOffer() {
       </div>
       <ul className="tile-grid">
         {offer.services.slice(0, 9).map((s, i) => (
-          <li key={s} className="tile"><span className="tile-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{s}</li>
+          <li key={s} className="tile"><span className="tile-head" aria-hidden="true"><span className="tile-num">{String(i + 1).padStart(2, '0')}</span><ServiceIcon index={i} /></span>{s}</li>
         ))}
       </ul>
       <div className="home-offer-foot">

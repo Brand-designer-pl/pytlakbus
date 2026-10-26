@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { PageShell } from '@/components/SiteChrome';
 import { area, contact, offer, pages } from '@/content';
 import { pageMeta } from '@/lib/seo';
+import { ServiceIcon } from '@/components/ServiceIcon';
 
 export const metadata = pageMeta({ ...pages.oferta, path: '/oferta/' });
 
@@ -18,7 +19,7 @@ export default function Page() {
         <h2 id="uslugi" className="section-title" data-in>Nasze usługi przewozowe obejmują między innymi</h2>
         <ul className="tile-grid">
           {offer.services.map((s, i) => (
-            <li key={s} className="tile" data-in><span className="tile-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{s}</li>
+            <li key={s} className="tile" data-in><span className="tile-head" aria-hidden="true"><span className="tile-num">{String(i + 1).padStart(2, '0')}</span><ServiceIcon index={i} /></span>{s}</li>
           ))}
         </ul>
       </section>

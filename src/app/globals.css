@@ -348,6 +348,8 @@ html.booking-lock { overflow: hidden; }
 .tile { display: grid; align-content: space-between; gap: 22px; min-height: clamp(110px, 14vh, 150px); padding: clamp(16px, 1.5vw, 24px); border-radius: var(--radius);
   background: var(--tile); font-size: clamp(16px, 1.35vw, 21px); font-weight: 500; letter-spacing: -0.025em; line-height: 1.2; }
 .tile-num { color: var(--muted); font-size: 13px; font-weight: 500; letter-spacing: 0; }
+.tile-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.tile-icon { flex: none; width: clamp(24px, 1.9vw, 30px); height: auto; color: var(--ink); }
 .tile--tall { align-content: start; min-height: clamp(180px, 24vh, 260px); }
 .tile--tall h3 { margin: 0; font-size: clamp(20px, 1.7vw, 28px); font-weight: 500; letter-spacing: -0.04em; }
 .tile--tall p { color: #4a4a4a; font-size: clamp(14px, 1.05vw, 16px); font-weight: 400; line-height: 1.5; letter-spacing: -0.01em; }

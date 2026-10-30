@@ -92,7 +92,7 @@ export function Landing() {
 
       const lite = window.matchMedia('(max-width: 767px), (pointer: coarse)').matches;
       const blur = (px: number) => (lite ? {} : { filter: `blur(${px}px)` });
-      const g = { vw: 0, vh: 0, iw: 0, ih: 0, gap: 0, xStart: 0, yStart: 0, yMid: 0, scale: 1, mobile: false };
+      const g = { vw: 0, vh: 0, iw: 0, ih: 0, gap: 0, xStart: 0, yStart: 0, yMid: 0, scale: 1, mobile: false, centerY: 0, carLift: 0 };
       const measure = () => {
         g.vw = stageEl.clientWidth; g.vh = stageEl.clientHeight; g.mobile = g.vw < 768;
         g.iw = g.mobile ? g.vw * 0.62 : Math.min(Math.max(g.vw * 0.24, 260), 480);
@@ -102,6 +102,12 @@ export function Landing() {
         g.yStart = g.vh * (g.mobile ? 0.3 : 0.36);
         g.yMid = g.vh * (g.mobile ? 0.22 : 0.25); // rząd pod tekstem kolekcji na przystanku
         g.scale = (g.mobile ? g.vw * 0.94 : Math.min(g.vw * 0.7, 1150)) / (g.iw * 0.88 * fleet[featuredIndex].size);
+        // Szczegóły: dolna krawędź auta tuż nad panelem (liczone dla najwyższego wycinka, bo karuzela podmienia zdjęcie).
+        const bar = stageEl.querySelector('.detail-bar');
+        const barTop = bar ? bar.getBoundingClientRect().top - stageEl.getBoundingClientRect().top : g.vh * 0.72;
+        const half = (g.iw * 0.88 * fleet[featuredIndex].size) / Math.min(...fleet.map((c) => c.ratio)) / 2;
+        g.carLift = (g.vh * 0.02) / g.scale; // unoszenie auta w trakcie szczegółów (~2% wysokości ekranu)
+        g.centerY = barTop - g.vh * 0.025 - g.vh / 2 - g.scale * (1.05 * half - g.carLift);
         stageEl.style.setProperty('--iw', `${g.iw}px`);
         stageEl.style.setProperty('--ih', `${g.ih}px`);
         stageEl.style.setProperty('--gap', `${g.gap}px`);
@@ -233,7 +239,7 @@ export function Landing() {
         .fromTo(collectionSplit.words, { opacity: 0, ...blur(10) }, { opacity: 1, ...blur(0), duration: 0.35, stagger: 0.035 }, T.fleetIn + 0.2)
         .to(collectionSplit.words, { opacity: 0, ...blur(12), duration: 0.4, stagger: 0.008, ease: 'power1.in' }, T.collectionOut)
         // 6. Wybrane auto rośnie do centrum, sąsiedzi odjeżdżają rozmyci.
-        .to(center, { scale: () => g.scale, y: () => -g.vh * (g.mobile ? 0.1 : 0.06), duration: 1, ease: 'power2.inOut' }, T.feature)
+        .to(center, { scale: () => g.scale, y: () => g.centerY, duration: 1, ease: 'power2.inOut' }, T.feature)
         .to(left, { x: () => -g.vw * 0.28, opacity: 0, ...blur(16), duration: 0.9, ease: 'power2.in' }, T.feature)
         .to(right, { x: () => g.vw * 0.28, opacity: 0, ...blur(16), duration: 0.9, ease: 'power2.in' }, T.feature)
         // 7. Panel szczegółów wjeżdża kafelkami.
@@ -243,7 +249,7 @@ export function Landing() {
         .fromTo(q('.morph-profile'), { scale: 1.24, xPercent: -4 }, { scale: 1, xPercent: 4, duration: T.morph2 + 0.6 - (T.morph1 + 0.5), ease: 'none' }, T.morph1 + 0.5)
         .fromTo(q('.statement'), { y: 40 }, { y: -40, duration: T.morph2 - T.statementIn, ease: 'none' }, T.statementIn)
         .fromTo(q('.collection-text'), { yPercent: -54 }, { yPercent: -70, duration: T.feature - T.fleetIn, ease: 'none' }, T.fleetIn)
-        .fromTo(center.querySelector('.car'), { y: 0, scale: 1 }, { y: () => -g.vh * 0.035, scale: 1.05, duration: T.end - T.detail + 0.1, ease: 'power1.out' }, T.detail - 0.1)
+        .fromTo(center.querySelector('.car'), { y: 0, scale: 1 }, { y: () => -g.carLift, scale: 1.05, duration: T.end - T.detail + 0.1, ease: 'power1.out' }, T.detail - 0.1)
         .to({}, { duration: 0.1 }, T.end - 0.1);
 
       const stopObserving = observeLayout(stageEl);

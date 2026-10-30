@@ -50,6 +50,7 @@ export function SiteFooter({ onReserve }: { onReserve?: (event: React.MouseEvent
           {contact.address && <span>{contact.address}</span>}
           {contact.email && <a href={`mailto:${contact.email}`}>{contact.email}</a>}
           {contact.phone && <a href={contact.phone.href}>tel. {contact.phone.display}</a>}
+          {contact.phone2 && <a href={contact.phone2.href}>tel. {contact.phone2.display}</a>}
         </address>
         <nav aria-label="Stopka" className="footer-nav">
           {navItems.slice(1).map((item) => <Link key={item.href} href={item.href}>{item.label}</Link>)}

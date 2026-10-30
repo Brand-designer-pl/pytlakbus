@@ -103,7 +103,7 @@ export const copy = {
   city: 'Puszczykowo',
   titleMuted: 'Bezpieczeństwo',
   titleLines: ['& komfort', 'podróży'] as const,
-  heroLead: 'Jesteśmy firmą z wieloletnim doświadczeniem w przewozie osób. Działamy 7 dni w tygodniu, 24 godziny na dobę.',
+  heroLead: 'Jesteśmy firmą z wieloletnim doświadczeniem w przewozie osób. Działamy 7 dni w tygodniu.',
   statement: ['Dbamy o komfort,', 'bezpieczeństwo i zadowolenie', 'naszych Klientów.', 'Do każdego podchodzimy', 'indywidualnie.'],
   collection: 'Nowoczesna i zadbana flota: od Mercedesa Vito po Sprintera na 22 osoby. Dla instytucji i grup prywatnych.',
 };
@@ -111,12 +111,14 @@ export const copy = {
 // Dane kontaktowe i rejestrowe firmy (od klienta, 2026-10-20).
 export const contact: {
   phone: { display: string; href: string } | null;
+  phone2: { display: string; href: string } | null; // drugi numer (od klienta, 2026-10-30)
   email: string | null;
   address: string | null; // ulica i numer, kod pocztowy, miasto
   mapUrl: string | null; // link do Map Google
   hours: string;
 } = {
   phone: { display: '+48 505 048 472', href: 'tel:+48505048472' },
+  phone2: { display: '+48 505 048 473', href: 'tel:+48505048473' },
   email: 'bus@pytlakprzewozy.pl',
   address: 'ul. Topolowa 1, 62-040 Puszczykowo',
   mapUrl: 'https://www.google.com/maps/search/?api=1&query=ul.+Topolowa+1%2C+62-040+Puszczykowo',
@@ -158,7 +160,7 @@ export const site = {
 };
 
 // Obszar działania potwierdzony przez klienta (jak na starej stronie).
-export const area = ['Puszczykowo', 'Poznań', 'Mosina', 'Luboń', 'Wielkopolska'];
+export const area = ['Puszczykowo', 'Poznań', 'Mosina', 'Luboń', 'Wielkopolska', 'Polska', 'Europa'];
 
 export const offer = {
   lead: 'Ofertę kierujemy zarówno do przedstawicieli instytucji, jak i do grup osób prywatnych. Do każdego klienta podchodzimy indywidualnie i z pełnym zrozumieniem jego potrzeb. Jesteśmy otwarci na sugestie i dokładamy starań, aby każdy klient był zadowolony i chętnie do nas wracał.',
@@ -184,11 +186,12 @@ export const about = {
     'Posiadamy Certyfikat Kompetencji Zawodowych w Krajowym i Międzynarodowym Przewozie Osób oraz Licencję na Wykonywanie Krajowego Przewozu Osób — potwierdzone przez Instytut Transportu Samochodowego.',
     'Od początku istnienia dokładamy wszelkich starań, aby nasze usługi były zawsze na najwyższym poziomie i spełniały wymagania oraz oczekiwania Klientów. Dbamy o komfort, bezpieczeństwo i zadowolenie pasażerów — zarówno na krótkich, jak i na dalekich trasach.',
     'W naszych szeregach są profesjonalni kierowcy, którzy zapewnią Państwu bezpieczeństwo i komfort jazdy. Współpracujemy z wieloma instytucjami: uczelniami, szkołami, firmami i innymi.',
-    'Do każdego zamówienia podchodzimy indywidualnie i oferujemy atrakcyjne stawki. Serdecznie zapraszamy do współpracy!',
+    'Do każdego zamówienia podchodzimy indywidualnie.',
+    'Serdecznie zapraszamy do współpracy!',
   ],
   values: [
     { title: 'Profesjonalizm', text: 'Wychodząc naprzeciw Twoim oczekiwaniom, działamy 7 dni w tygodniu i 24 godziny na dobę. Do każdego zlecenia podchodzimy indywidualnie.' },
-    { title: 'Bezpieczeństwo', text: 'Bezpieczeństwo klientów i kierowców jest dla nas wartością nadrzędną. Nasi kierowcy to osoby z wieloletnim doświadczeniem, do pracy przystępujące zawsze wypoczęte.' },
+    { title: 'Bezpieczeństwo', text: 'Bezpieczeństwo klientów i kierowców jest dla nas wartością nadrzędną. Nasi kierowcy to osoby z wieloletnim doświadczeniem.' },
     { title: 'Jakość', text: 'Dokładamy wszelkich starań, aby nasze usługi były zawsze na najwyższym poziomie.' },
     { title: 'Środowisko', text: 'W trosce o środowisko nasze pojazdy spełniają najwyższe normy emisji spalin, potwierdzone adnotacjami w dowodach rejestracyjnych.' },
   ],

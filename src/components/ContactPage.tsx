@@ -82,6 +82,7 @@ export function ContactPage() {
             <div className="info-card info-card--dark" data-in>
               <p className="info-label">Telefon</p>
               {contact.phone ? <a className="info-value" href={contact.phone.href}>{contact.phone.display}</a> : todo('Numer telefonu')}
+              {contact.phone2 && <a className="info-value" href={contact.phone2.href}>{contact.phone2.display}</a>}
               <p className="info-note">{contact.hours}</p>
             </div>
             <div className="info-card" data-in>

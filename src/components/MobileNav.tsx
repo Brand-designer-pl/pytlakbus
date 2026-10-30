@@ -51,6 +51,7 @@ export function MobileNav({ current, onReserve }: { current: string; onReserve?:
           <div className="mobile-nav-foot">
             <Link className="btn btn-dark" href="/#rezerwacja" onClick={(e) => { setOpen(false); onReserve?.(e); }}>Zarezerwuj przejazd</Link>
             {contact.phone && <a className="btn btn-soft" href={contact.phone.href}>Zadzwoń: {contact.phone.display}</a>}
+            {contact.phone2 && <a className="btn btn-soft" href={contact.phone2.href}>Zadzwoń: {contact.phone2.display}</a>}
             <p className="muted">{contact.hours}</p>
           </div>
         </div>,

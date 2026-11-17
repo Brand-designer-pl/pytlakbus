@@ -1,0 +1,15 @@
+{
+ "id": "strona-www-pytlakprzewozy-pl-poprawki-po-publikacji",
+ "title": "Strona www.pytlakprzewozy.pl — poprawki po publikacji",
+ "state": "czeka-na-wlasciciela",
+ "next": "Założyć skrzynkę biuro@pytlakprzewozy.pl w DirectAdmin i zdecydować o adresatach formularza; decyzja o '24 h' w stopce i pasku haseł",
+ "blocker": "Skrzynka biuro@ do założenia przez właściciela (agent ma tylko FTP)",
+ "files": [
+  "Projekty/avelon-drive/landing/HANDOFF.md"
+ ],
+ "note": "Ikony, poprawki klientki, drugi telefon i pozycja auta w szczegółach są na żywej stronie (2026-10-30)",
+ "created": "2026-11-17T15:59:05Z",
+ "updated": "2026-11-17T15:59:05Z",
+ "agent": "claude",
+ "chat": "10a115da-e5c1-441a-b2ef-2e1ae0da7325"
+}

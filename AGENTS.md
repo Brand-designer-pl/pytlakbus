@@ -6,7 +6,7 @@
 - Zasady: treść widoczna bez JS; `prefers-reduced-motion` wyłącza pin/scrub; animuj transform/opacity (wyjątek opisany w DECISIONS); sprzątaj każdy trigger w kontekście `useGSAP`/`matchMedia`.
 - Media w `public/media/` wygenerowane w Magnific (projekt „Avelon Drive — landing”) ze zdjęcia Mercedesa V-Class klienta. Przy poprawkach nadpisuj pliki pod tymi samymi nazwami; nie twórz wersji numerowanych.
 - Komendy: `npm run dev` (port 3107), `npm run check`, `npm run build`.
-- Debug w dev: w konsoli `__avelonSeek(t)` ustawia scenę na moment `t` osi czasu (0–9.6); etapy: 0, 3.3, 6.8, 9.6 (przewijanie ciągłe, scrub 1).
+- Debug w dev: w konsoli `__avelonSeek(t)` ustawia scenę na moment `t` osi czasu (0–8.15); przystanki: 0, 2.75 (manifest), 5.55 (kolekcja), 8.15 (szczegóły). Scrub 0.6, stała `T` w Landing.tsx.
 
 ## Publikacja (www.pytlakprzewozy.pl)
 - Hosting: DirectAdmin, serwer h9.d2.pl, Apache + PHP 8.3. Dostęp: FTPS, konto gpt@pytlakprzewozy.pl, hasło w pęku kluczy macOS (usługa `pytlak-ftp`) — nigdy w plikach ani czacie. SSH niedostępne.
